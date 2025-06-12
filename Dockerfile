@@ -59,6 +59,9 @@ ARG ARCH
 ARG JQ_VERSION="1.7.1"
 RUN curl -L https://github.com/jqlang/jq/releases/download/jq-${JQ_VERSION}/jq-linux-${ARCH} -o /usr/local/bin/jq && \
     chmod +x /usr/local/bin/jq
+
+
+
 ####### Final Image #######
 FROM base-image AS final-image
 WORKDIR /usr/local/bin/
@@ -71,6 +74,11 @@ COPY --from=kubernetes-tools-setup /usr/local/bin/kubectl /usr/local/bin/helm3 /
 COPY --from=goss-setup /usr/local/bin/goss .
 # copy jq
 COPY --from=jq-setup /usr/local/bin/jq .
+####### Golang setup #######
+ARG ARCH
+ARG GO_VERSION="1.23.4"
+RUN apk add --update --repository=https://dl-cdn.alpinelinux.org/alpine/edge/community go 
+RUN go version
 
 WORKDIR /work
 # Set the entrypoint to bash
